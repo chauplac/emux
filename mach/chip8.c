@@ -11,8 +11,8 @@
 #define ROM_ADDRESS	0x0200
 
 static void chip8_print_usage();
-static uint8_t ram_readb(struct region *region, uint16_t address);
-static void ram_writeb(struct region *region, uint8_t b, uint16_t address);
+static uint8_t ram_readb(region_data_t *data, uint16_t address);
+static void ram_writeb(region_data_t *data, uint8_t b, uint16_t address);
 
 static struct resource ram_area = {
 	.name = "ram",
@@ -50,15 +50,15 @@ static uint8_t char_mem[] = {
 	0xF0, 0x80, 0xF0, 0x80, 0x80
 };
 
-uint8_t ram_readb(struct region *region, uint16_t address)
+uint8_t ram_readb(region_data_t *data, uint16_t address)
 {
-	uint8_t *mem = (uint8_t *)region->data + address;
+	uint8_t *mem = (uint8_t *)data + address;
 	return *(uint8_t *)mem;
 }
 
-void ram_writeb(struct region *region, uint8_t b, uint16_t address)
+void ram_writeb(region_data_t *data, uint8_t b, uint16_t address)
 {
-	uint8_t *mem = (uint8_t *)region->data + address;
+	uint8_t *mem = (uint8_t *)data + address;
 	*mem = b;
 }
 

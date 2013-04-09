@@ -35,11 +35,6 @@ struct controller_instance
 	struct controller *controller;
 };
 
-struct controller_instance_link {
-	struct controller_instance *instance;
-	struct controller_instance_link *next;
-};
-
 void controller_add(struct controller_instance *instance);
 struct resource *controller_get_resource(char *name,
 	struct controller_instance *instance);

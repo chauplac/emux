@@ -24,6 +24,7 @@ struct machine {
 	struct list_link *controller_instances;
 	struct list_link *regions;
 	uint32_t clock_rate;
+	bool running;
 	bool (*init)();
 	void (*deinit)();
 };

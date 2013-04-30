@@ -7,6 +7,7 @@
 #include <cmdline.h>
 #include <controller.h>
 #include <cpu.h>
+#include <debugger.h>
 #include <input.h>
 #include <machine.h>
 #include <memory.h>
@@ -97,6 +98,9 @@ void machine_run()
 
 	/* Run until user quits */
 	while (machine->running) {
+		/* Give a chance for the debugger to break */
+		debugger_update();
+
 		/* Update input sub-system */
 		input_update();
 

@@ -6,6 +6,7 @@
 #include <audio.h>
 #include <cmdline.h>
 #include <config.h>
+#include <debugger.h>
 #include <machine.h>
 #include <video.h>
 
@@ -52,11 +53,12 @@ void print_usage(bool error)
 	/* Print options */
 	fprintf(stream, "\n");
 	fprintf(stream, "Emux options:\n");
-	fprintf(stream, "  --machine=MACH    Selects machine to emulate\n");
-	fprintf(stream, "  --audio=AUDIO     Selects audio frontend\n");
-	fprintf(stream, "  --video=VIDEO     Selects video frontend\n");
-	fprintf(stream, "  --width=WIDTH     Overrides window width\n");
-	fprintf(stream, "  --height=HEIGHT   Overrides window height\n");
+	fprintf(stream, "  --machine=MACH    Select machine to emulate\n");
+	fprintf(stream, "  --audio=AUDIO     Select audio frontend\n");
+	fprintf(stream, "  --video=VIDEO     Select video frontend\n");
+	fprintf(stream, "  --width=WIDTH     Override window width\n");
+	fprintf(stream, "  --height=HEIGHT   Override window height\n");
+	fprintf(stream, "  --debugger        Enable debugger support\n");
 	fprintf(stream, "  --help            Display this help and exit\n");
 	fprintf(stream, "\n");
 
@@ -106,16 +108,19 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	/* Initialize machine */
+	/* Initialize debugger */
+	if (debugger_init()) {
+		debugger_run();
+		debugger_deinit();
+		return 0;
+	}
+
+	/* Initialize, run, and deinit machine */
 	if (!machine_init()) {
 		print_usage(true);
 		return 1;
 	}
-
-	/* Run machine */
 	machine_run();
-
-	/* Deinitialize machine */
 	machine_deinit();
 
 	return 0;

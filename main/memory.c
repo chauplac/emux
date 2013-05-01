@@ -8,6 +8,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #endif
+#include <debugger.h>
 #include <machine.h>
 #include <memory.h>
 #include <util.h>
@@ -69,6 +70,11 @@ uint8_t memory_readb(uint16_t address)
 	struct list_link *regions = machine->regions;
 	struct region *region;
 	uint16_t a = address;
+	struct debugger_event debugger_event;
+
+	debugger_event.type = EVENT_MEM_ACCESS;
+	debugger_event.address = address;
+	debugger_report(&debugger_event);
 
 	while ((region = memory_find_region(&regions, &a))) {
 		if (region->mops->readb)
@@ -83,6 +89,11 @@ uint16_t memory_readw(uint16_t address)
 	struct list_link *regions = machine->regions;
 	struct region *region;
 	uint16_t a = address;
+	struct debugger_event debugger_event;
+
+	debugger_event.type = EVENT_MEM_ACCESS;
+	debugger_event.address = address;
+	debugger_report(&debugger_event);
 
 	while ((region = memory_find_region(&regions, &a))) {
 		if (region->mops->readw)
@@ -97,6 +108,11 @@ void memory_writeb(uint8_t b, uint16_t address)
 	struct list_link *regions = machine->regions;
 	struct region *region;
 	uint16_t a = address;
+	struct debugger_event debugger_event;
+
+	debugger_event.type = EVENT_MEM_ACCESS;
+	debugger_event.address = address;
+	debugger_report(&debugger_event);
 
 	while ((region = memory_find_region(&regions, &a))) {
 		if (region->mops->writeb)
@@ -110,6 +126,11 @@ void memory_writew(uint16_t w, uint16_t address)
 	struct list_link *regions = machine->regions;
 	struct region *region;
 	uint16_t a = address;
+	struct debugger_event debugger_event;
+
+	debugger_event.type = EVENT_MEM_ACCESS;
+	debugger_event.address = address;
+	debugger_report(&debugger_event);
 
 	while ((region = memory_find_region(&regions, &a))) {
 		if (region->mops->writew)

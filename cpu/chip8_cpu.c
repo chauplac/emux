@@ -7,6 +7,7 @@
 #include <audio.h>
 #include <clock.h>
 #include <cpu.h>
+#include <debugger.h>
 #include <input.h>
 #include <memory.h>
 #include <video.h>
@@ -505,6 +506,7 @@ bool chip8_init(struct cpu_instance *instance)
 void chip8_tick(clock_data_t *data)
 {
 	struct chip8 *chip8 = data;
+	struct debugger_event debugger_event;
 
 	/* Fetch opcode */
 	uint8_t o1 = memory_readb(chip8->PC++);
@@ -514,42 +516,63 @@ void chip8_tick(clock_data_t *data)
 	/* Execute opcode */
 	switch (chip8->opcode.main) {
 	case 0x00:
-		return opcode_0(chip8);
+		opcode_0(chip8);
+		break;
 	case 0x01:
-		return JP_addr(chip8);
+		JP_addr(chip8);
+		break;
 	case 0x02:
-		return CALL_addr(chip8);
+		CALL_addr(chip8);
+		break;
 	case 0x03:
-		return SE_Vx_byte(chip8);
+		SE_Vx_byte(chip8);
+		break;
 	case 0x04:
-		return SNE_Vx_byte(chip8);
+		SNE_Vx_byte(chip8);
+		break;
 	case 0x05:
-		return SE_Vx_Vy(chip8);
+		SE_Vx_Vy(chip8);
+		break;
 	case 0x06:
-		return LD_Vx_byte(chip8);
+		LD_Vx_byte(chip8);
+		break;
 	case 0x07:
-		return ADD_Vx_byte(chip8);
+		ADD_Vx_byte(chip8);
+		break;
 	case 0x08:
-		return opcode_8(chip8);
+		opcode_8(chip8);
+		break;
 	case 0x09:
-		return SNE_Vx_Vy(chip8);
+		SNE_Vx_Vy(chip8);
+		break;
 	case 0x0A:
-		return LD_I_addr(chip8);
+		LD_I_addr(chip8);
+		break;
 	case 0x0B:
-		return JP_V0_addr(chip8);
+		JP_V0_addr(chip8);
+		break;
 	case 0x0C:
-		return RND_Vx_byte(chip8);
+		RND_Vx_byte(chip8);
+		break;
 	case 0x0D:
-		return DRW_Vx_Vy_nibble(chip8);
+		DRW_Vx_Vy_nibble(chip8);
+		break;
 	case 0x0E:
-		return opcode_E(chip8);
+		opcode_E(chip8);
+		break;
 	case 0x0F:
-		return opcode_F(chip8);
+		opcode_F(chip8);
+		break;
 	default:
 		fprintf(stderr, "chip8: unknown opcode (%04x)!\n",
 			chip8->opcode.raw);
 		break;
 	}
+
+	/* Indicate to debugger that PC has changed */
+	debugger_event.type = EVENT_EXECUTE;
+	debugger_event.address = chip8->PC;
+	debugger_report(&debugger_event);
 }
 
 void chip8_update_counters(clock_data_t *data)

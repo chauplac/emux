@@ -1,4 +1,4 @@
-Emux <https://github.com/sronsse/emux>
+Emux <http://emux.googlecode.com>
 
 These are the release notes for Emux and tell you what this project is about,
 how to build it, how to install it, and how to run it.
@@ -70,13 +70,15 @@ INSTALLING EMUX
     make install
 
 RUNNING EMUX
+
   Once installed on your system, you should now be able to run Emux. Here is a
   list of the available options:
-    --machine=MACH    Selects machine to emulate
-    --audio=AUDIO     Selects audio frontend
-    --video=VIDEO     Selects video frontend
-    --width=WIDTH     Overrides window width
-    --height=HEIGHT   Overrides window height
+    --machine=MACH    Select machine to emulate
+    --audio=AUDIO     Select audio frontend
+    --video=VIDEO     Select video frontend
+    --width=WIDTH     Override window width
+    --height=HEIGHT   Override window height
+    --debugger        Enable debugger support
     --help            Display help, available frontends and machines
 
   If you would like to run INVADERS (CHIP-8) using libcaca for graphics, SDL for
@@ -86,6 +88,24 @@ RUNNING EMUX
   Every machine has its subset of options which can be displayed by executing
   emux --machine=MACH where MACH is the machine name. Example:
     emux --machine=nes
+
+USING THE DEBUGGER
+  The --debugger option brings up the debugger prompt after launching Emux. The
+  interface used is very similar to gdb. From there, multiple commands can be
+  executed:
+  - help               Display available commands
+  - run                Start machine execution
+  - continue           Continue machine execution
+  - kill               Stop machine execution
+  - quit               Quit debugger and Emux
+  - break <address>    Add breakpoint
+  - watch <address>    Add watchpoint
+  - list               List batchpoints/watchpoints
+  - delete <id>        Delete breakpoint/watchpoint
+
+  Ctrl-C (Linux only at this moment) pauses the machine execution (if running)
+  and displays the debugger prompt. Typing the first letter of a command (for
+  instead 'b' for 'break') works as well.
 
 HELP
   If you need help with Emux, or would like to report bugs (as long as these are

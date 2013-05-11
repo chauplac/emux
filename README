@@ -20,9 +20,15 @@ SOFTWARE DEPENDENCIES
   Before being able to build Emux, kconfig-frontends needs to be installed on
   your host machine. Linux developers should be very familiar with menuconfig,
   a convenient menu-driven user interface allowing the configuration of the
-  Linux kernel. Developed by Yann E. Morin, kconfig-frontends offers the ability
-  to use the same configuration system for any project, such as Emux. Once
-  kconfig-frontends is built and installed, make sure kconfig-mconf is
+  Linux kernel. kconfig-frontends brings the ability to use that same tools for
+  any project other than the Linux kernel, by packaging these tools apart from
+  the kernel so that they can ship independently. However, the project aims at
+  tracking changes made to kconfig in the kernel development tree, to ensure
+  they benefit to anyone using kconfig-frontends. The current package maintainer
+  is Yann E. Morin, and the project is hosted at:
+  http://ymorin.is-a-geek.org/projects/kconfig-frontends
+
+  Once kconfig-frontends is built and installed, make sure kconfig-mconf is
   available on your system, as Emux uses this particular frontend.
 
   Emux can use different audio and video/input frontends. At the time of

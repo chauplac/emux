@@ -1,0 +1,6 @@
+#!/bin/sh
+
+printf "Running autoreconf...\n"
+autoreconf -f -i
+
+printf "Done. You may now run:\n    ./configure\n"

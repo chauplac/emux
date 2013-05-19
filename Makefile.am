@@ -1,5 +1,5 @@
 bin_PROGRAMS = emux
-emux_CFLAGS = -I$(srcdir)/include -O2 -Wall -Wextra -Werror \
+emux_CFLAGS = -I$(srcdir)/include -Wall -Wextra -Werror \
 	$(CACA_CFLAGS) \
 	$(SDL_CFLAGS)
 emux_LDFLAGS = -T$(srcdir)/linker.lds

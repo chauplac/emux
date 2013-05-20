@@ -10,6 +10,10 @@
 #include <machine.h>
 #include <video.h>
 
+#if defined(CONFIG_VIDEO_SDL) && defined(__APPLE__)
+# include <SDL.h>
+#endif
+
 static void print_usage(bool error);
 
 #if defined(_WIN32)

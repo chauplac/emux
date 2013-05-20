@@ -12,7 +12,7 @@
 
 static void print_usage(bool error);
 
-#ifdef _WIN32
+#if defined(_WIN32)
 extern struct machine _machines_begin, _machines_end;
 extern struct audio_frontend _audio_frontends_begin, _audio_frontends_end;
 extern struct video_frontend _video_frontends_begin, _video_frontends_end;
@@ -22,6 +22,13 @@ static struct audio_frontend *audio_frontends_begin = &_audio_frontends_begin;
 static struct audio_frontend *audio_frontends_end = &_audio_frontends_end;
 static struct video_frontend *video_frontends_begin = &_video_frontends_begin;
 static struct video_frontend *video_frontends_end = &_video_frontends_end;
+#elif defined(__APPLE__)
+extern struct machine *machines_begin;
+extern struct machine *machines_end;
+extern struct audio_frontend *audio_frontends_begin;
+extern struct audio_frontend *audio_frontends_end;
+extern struct video_frontend *video_frontends_begin;
+extern struct video_frontend *video_frontends_end;
 #else
 extern struct machine __machines_begin, __machines_end;
 extern struct audio_frontend __audio_frontends_begin, __audio_frontends_end;

@@ -3,10 +3,33 @@
 #include <cmdline.h>
 #include <audio.h>
 
-#ifdef _WIN32
+#ifdef __APPLE__
+# include <mach-o/getsect.h>
+void cx_audio_frontends(void) __attribute__((__constructor__));
+#endif
+
+#if defined(_WIN32)
 extern struct audio_frontend _audio_frontends_begin, _audio_frontends_end;
 static struct audio_frontend *audio_frontends_begin = &_audio_frontends_begin;
 static struct audio_frontend *audio_frontends_end = &_audio_frontends_end;
+#elif defined(__APPLE__)
+struct audio_frontend *audio_frontends_begin;
+struct audio_frontend *audio_frontends_end;
+void cx_audio_frontends(void)
+{
+# ifdef __LP64__
+	const struct section_64 *sect = getsectbyname(AUDIO_SEGMENT_NAME,
+						      AUDIO_SECTION_NAME);
+# else
+	const struct section *sect = getsectbyname(AUDIO_SEGMENT_NAME,
+						   AUDIO_SECTION_NAME);
+# endif
+	if (sect) {
+		audio_frontends_begin = (struct audio_frontend *)(sect->addr);
+		audio_frontends_end   = (struct audio_frontend *)(sect->addr +
+								  sect->size);
+	}
+}
 #else
 extern struct audio_frontend __audio_frontends_begin, __audio_frontends_end;
 static struct audio_frontend *audio_frontends_begin = &__audio_frontends_begin;

@@ -13,15 +13,37 @@
 #include <memory.h>
 #include <util.h>
 
+#ifdef __APPLE__
+# include <mach-o/getsect.h>
+void cx_machines(void) __attribute__((__constructor__));
+#endif
+
 #define NS(s) ((s) * 1000000000)
 
 static void machine_input_event(int id, struct input_state *state,
 	input_data_t *data);
 
-#ifdef _WIN32
+#if defined(_WIN32)
 extern struct machine _machines_begin, _machines_end;
 static struct machine *machines_begin = &_machines_begin;
 static struct machine *machines_end = &_machines_end;
+#elif defined(__APPLE__)
+struct machine *machines_begin;
+struct machine *machines_end;
+void cx_machines(void)
+{
+# ifdef __LP64__
+	const struct section_64 *sect = getsectbyname(MACHINE_SEGMENT_NAME,
+						      MACHINE_SECTION_NAME);
+# else
+	const struct section *sect = getsectbyname(MACHINE_SEGMENT_NAME,
+						   MACHINE_SECTION_NAME);
+# endif
+	if (sect) {
+		machines_begin = (struct machine *)(sect->addr);
+		machines_end   = (struct machine *)(sect->addr + sect->size);
+	}
+}
 #else
 extern struct machine __machines_begin, __machines_end;
 static struct machine *machines_begin = &__machines_begin;

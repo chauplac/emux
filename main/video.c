@@ -4,10 +4,33 @@
 #include <input.h>
 #include <video.h>
 
-#ifdef _WIN32
+#ifdef __APPLE__
+# include <mach-o/getsect.h>
+void cx_video_frontends(void) __attribute__((__constructor__));
+#endif
+
+#if defined(_WIN32)
 extern struct video_frontend _video_frontends_begin, _video_frontends_end;
 static struct video_frontend *video_frontends_begin = &_video_frontends_begin;
 static struct video_frontend *video_frontends_end = &_video_frontends_end;
+#elif defined(__APPLE__)
+struct video_frontend *video_frontends_begin;
+struct video_frontend *video_frontends_end;
+void cx_video_frontends(void)
+{
+# ifdef __LP64__
+	const struct section_64 *sect = getsectbyname(VIDEO_SEGMENT_NAME,
+						      VIDEO_SECTION_NAME);
+# else
+	const struct section *sect = getsectbyname(VIDEO_SEGMENT_NAME,
+						   VIDEO_SECTION_NAME);
+# endif
+	if (sect) {
+		video_frontends_begin = (struct video_frontend *)(sect->addr);
+		video_frontends_end   = (struct video_frontend *)(sect->addr +
+								  sect->size);
+	}
+}
 #else
 extern struct video_frontend __video_frontends_begin, __video_frontends_end;
 static struct video_frontend *video_frontends_begin = &__video_frontends_begin;

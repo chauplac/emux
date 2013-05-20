@@ -4,10 +4,32 @@
 #include <cpu.h>
 #include <machine.h>
 
-#ifdef _WIN32
+#ifdef __APPLE__
+# include <mach-o/getsect.h>
+void cx_cpus(void) __attribute__((__constructor__));
+#endif
+
+#if defined(_WIN32)
 extern struct cpu _cpus_begin, _cpus_end;
 static struct cpu *cpus_begin = &_cpus_begin;
 static struct cpu *cpus_end = &_cpus_end;
+#elif defined(__APPLE__)
+static struct cpu *cpus_begin;
+static struct cpu *cpus_end;
+void cx_cpus(void)
+{
+# ifdef __LP64__
+	const struct section_64 *sect = getsectbyname(CPU_SEGMENT_NAME,
+						      CPU_SECTION_NAME);
+# else
+	const struct section *sect = getsectbyname(CPU_SEGMENT_NAME,
+						   CPU_SECTION_NAME);
+# endif
+	if (sect) {
+		cpus_begin = (struct cpu *)(sect->addr);
+		cpus_end   = (struct cpu *)(sect->addr + sect->size);
+	}
+}
 #else
 extern struct cpu __cpus_begin, __cpus_end;
 static struct cpu *cpus_begin = &__cpus_begin;

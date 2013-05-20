@@ -5,10 +5,33 @@
 #include <input.h>
 #include <list.h>
 
-#ifdef _WIN32
+#ifdef __APPLE__
+# include <mach-o/getsect.h>
+void cx_input_frontends(void) __attribute__((__constructor__));
+#endif
+
+#if defined(_WIN32)
 extern struct input_frontend _input_frontends_begin, _input_frontends_end;
 static struct input_frontend *input_frontends_begin = &_input_frontends_begin;
 static struct input_frontend *input_frontends_end = &_input_frontends_end;
+#elif defined(__APPLE__)
+static struct input_frontend *input_frontends_begin;
+static struct input_frontend *input_frontends_end;
+void cx_input_frontends(void)
+{
+# ifdef __LP64__
+	const struct section_64 *sect = getsectbyname(INPUT_SEGMENT_NAME,
+						      INPUT_SECTION_NAME);
+# else
+	const struct section *sect = getsectbyname(INPUT_SEGMENT_NAME,
+						   INPUT_SECTION_NAME);
+# endif
+	if (sect) {
+		input_frontends_begin = (struct input_frontend *)(sect->addr);
+		input_frontends_end   = (struct input_frontend *)(sect->addr +
+								  sect->size);
+	}
+}
 #else
 extern struct input_frontend __input_frontends_begin, __input_frontends_end;
 static struct input_frontend *input_frontends_begin = &__input_frontends_begin;

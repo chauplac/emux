@@ -4,10 +4,33 @@
 #include <controller.h>
 #include <machine.h>
 
-#ifdef _WIN32
+#ifdef __APPLE__
+# include <mach-o/getsect.h>
+void cx_controllers(void) __attribute__((__constructor__));
+#endif
+
+#if defined(_WIN32)
 extern struct controller _controllers_begin, _controllers_end;
 static struct controller *controllers_begin = &_controllers_begin;
 static struct controller *controllers_end = &_controllers_end;
+#elif defined(__APPLE__)
+static struct controller *controllers_begin;
+static struct controller *controllers_end;
+void cx_controllers(void)
+{
+# ifdef __LP64__
+	const struct section_64 *sect = getsectbyname(CONTROLLER_SEGMENT_NAME,
+						      CONTROLLER_SECTION_NAME);
+# else
+	const struct section *sect = getsectbyname(CONTROLLER_SEGMENT_NAME,
+						   CONTROLLER_SECTION_NAME);
+# endif
+	if (sect) {
+		controllers_begin = (struct controller *)(sect->addr);
+		controllers_end   = (struct controller *)(sect->addr +
+							  sect->size);
+	}
+}
 #else
 extern struct controller __controllers_begin, __controllers_end;
 static struct controller *controllers_begin = &__controllers_begin;

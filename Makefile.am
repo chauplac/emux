@@ -67,6 +67,9 @@ emux_SOURCES += mach/nes.c
 endif
 
 # Frontends
+if CONFIG_AUDIO_NULL
+emux_SOURCES += frontends/audio/null_audio.c
+endif
 if CONFIG_AUDIO_SDL
 emux_SOURCES += frontends/audio/sdl_audio.c
 endif

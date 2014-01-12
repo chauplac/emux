@@ -11,5 +11,12 @@ config AUDIO_SDL
 	help
 		Enable SDL (Simple DirectMedia Layer) audio frontend
 
+config AUDIO_NULL
+	bool "null"
+	select AUDIO
+	default y
+	help
+		Enable NULL audio frontend, for quiet hours of sane entertainment
+
 endmenu
 

@@ -5,6 +5,7 @@
 #include <env.h>
 #include <log.h>
 #include <machine.h>
+#include <config.h>
 
 #if (defined(CONFIG_AUDIO_SDL) || defined(CONFIG_VIDEO_SDL)) && \
 	defined(__APPLE__)

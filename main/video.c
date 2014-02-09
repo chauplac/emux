@@ -19,7 +19,6 @@ bool video_init(int width, int height)
 {
 	struct list_link *link = video_frontends;
 	struct video_frontend *fe;
-	int scale = 1;
 
 	if (frontend) {
 		LOG_E("Video frontend already initialized!\n");
@@ -32,6 +31,7 @@ bool video_init(int width, int height)
 		return false;
 	}
 
+	LOG_I("Scale factor set to: %d\n", scale);
 	/* Validate scaling factor */
 	if (scale <= 0) {
 		LOG_E("Scaling factor should be positive!\n");
